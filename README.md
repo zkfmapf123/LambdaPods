@@ -1,5 +1,13 @@
 # LambdaPods
 
+## Functions
+
+- [ ] Create 
+- [ ] Deploy
+- [ ] Update
+- [ ] Info
+- [ ] Delete
+
 ## yaml format
 
 ```yaml

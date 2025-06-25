@@ -18,6 +18,20 @@ type AWSParmas interface {
 	Retrieve(ClientParams)
 }
 
+var (
+	TABLE_NAME   = "lambdapods"
+	PRIMARY_KEY  = "function_arn"
+	BILLING_MODE = true
+)
+
+// dynamoDB에 저장될 ARN 리스트
+type FunctionAttrParams struct {
+	FunctionArn string `json:"function_arn"`
+	IAMArn      string `json:"iam_arn"`
+	SQSArn      string `json:"sqs_arn"`
+	SNSArn      string `json:"sns_arn"`
+}
+
 type ClientParams struct {
 	// albClient
 	// apiGWClient
@@ -28,14 +42,10 @@ type ClientParams struct {
 	snsClient    sns.Client
 	iamClient    iam.Client
 	lambdaClient lambda.Client
+
+	// db client
 	dynamoClient orm.TableParmas
 }
-
-var (
-	TABLE_NAME   = "lambdapods"
-	PRIMARY_KEY  = "function_arn"
-	BILLING_MODE = true
-)
 
 func NewClient() ClientParams {
 	c := context.Background()
