@@ -90,8 +90,8 @@ func setDefaultRouter(app *fiber.App) {
 
 func setRouters(app *fiber.App) {
 	// gracefully shutdown test
-	app.Get("/test", func(c *fiber.Ctx) error {
-		time.Sleep(15 * time.Second)
-		return c.SendString("test")
-	})
+	// app.Get("/test", func(c *fiber.Ctx) error {
+	// 	time.Sleep(15 * time.Second)
+	// 	return c.SendString("test")
+	// })
 }
