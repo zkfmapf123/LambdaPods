@@ -11,7 +11,7 @@ type User struct {
 	ID        uint      `gorm:"primaryKey;autoIncrement" json:"id"`
 	Email     string    `gorm:"unique;not null;size:100" json:"email"`
 	Password  string    `gorm:"not null;size:255" json:"-"`
-	Role      string    `gorm:"not null;default:readonly;size:20;check;role IN ('readonly', 'developer', 'admin)" json:"role"`
+	Role      string    `gorm:"not null;default:readonly;size:20;check:role IN ('readonly', 'developer', 'admin')" json:"role"`
 	CreatedAt time.Time `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 }

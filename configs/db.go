@@ -5,9 +5,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/stdlib"
-	"gorm.io/driver/postgres"
+	"github.com/zkfmapf123/lambda-pods/domains"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
@@ -18,15 +17,10 @@ func MustInitDB(
 	DB_PASS string,
 	DB_NAME string,
 ) *gorm.DB {
-	// pgx 로 연결
-	dsn := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s", DB_USER, DB_PASS, DB_HOST, DB_PORT, DB_NAME)
-
-	config, _ := pgx.ParseConfig(dsn)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", DB_USER, DB_PASS, DB_HOST, DB_PORT, DB_NAME)
 
 	// gorm 으로 매핑
-	db, err := gorm.Open(postgres.New(postgres.Config{
-		Conn: stdlib.OpenDB(*config),
-	}), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("Failed to connect to the database: %v", err)
 	}
@@ -34,6 +28,11 @@ func MustInitDB(
 	sql, err := db.DB()
 	if err != nil {
 		log.Fatalf("Failed to get database instance: %v", err)
+	}
+
+	// migrate
+	if err := MigrateDB(db); err != nil {
+		log.Fatalf("Failed to migrate the database: %v", err)
 	}
 
 	sql.SetMaxIdleConns(10)
@@ -45,4 +44,20 @@ func MustInitDB(
 	}
 
 	return db
+}
+
+func MigrateDB(db *gorm.DB) error {
+	return db.AutoMigrate(
+		&domains.User{},
+	)
+}
+
+func CloseDB(db *gorm.DB) error {
+	sql, err := db.DB()
+	if err != nil {
+		return err
+	}
+
+	sql.Close()
+	return nil
 }
