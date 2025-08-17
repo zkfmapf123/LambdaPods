@@ -1,3 +1,23 @@
+// Package main Lambda Pods API
+//
+// This is a sample server for Lambda Pods.
+//
+// Terms Of Service: http://swagger.io/terms/
+//
+// Schemes: http, https
+// Host: localhost:3000
+// BasePath: /
+// Version: 1.0.0
+// License: MIT http://opensource.org/licenses/MIT
+// Contact: your-email@example.com
+//
+// Consumes:
+// - application/json
+//
+// Produces:
+// - application/json
+//
+// swagger:meta
 package main
 
 import (
@@ -9,6 +29,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	fiberSwagger "github.com/swaggo/fiber-swagger"
 	"github.com/zkfmapf123/lambda-pods/cmd/examples/dto"
 	"github.com/zkfmapf123/lambda-pods/cmd/examples/handlers"
 	"github.com/zkfmapf123/lambda-pods/cmd/examples/middlewares"
@@ -17,6 +38,8 @@ import (
 	"github.com/zkfmapf123/lambda-pods/internal"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
+
+	_ "github.com/zkfmapf123/lambda-pods/cmd/examples/docs"
 )
 
 var (
@@ -61,7 +84,6 @@ func main() {
 
 	/////////////////////////////////////////////// Init /////////////////////////////////////////////////
 	InitDBHostAndExternalID(db, logger)
-
 	/////////////////////////////////////////////// Gracefully Shutdown ///////////////////////////////////////////////
 	q := make(chan os.Signal, 1)
 	signal.Notify(q, os.Interrupt, syscall.SIGTERM)
@@ -95,6 +117,7 @@ func setMiddleware(app *fiber.App, logger *zap.Logger) {
 
 func setDefaultRouter(app *fiber.App) {
 	app.
+		Get("/swagger/*", fiberSwagger.WrapHandler).
 		Get("/ping", func(c *fiber.Ctx) error {
 			return c.SendString("success")
 		}).

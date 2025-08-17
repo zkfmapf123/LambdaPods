@@ -11,15 +11,15 @@ func ValidateMiddleware[T any]() fiber.Handler {
 		var req T
 
 		// bind json
-		if err := c.BodyParser(req); err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(dto.NewResponse[interface{}](nil, fiber.StatusBadRequest, err.Error()))
+		if err := c.BodyParser(&req); err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(dto.NewResponse[any](nil, fiber.StatusBadRequest, err.Error()))
 		}
 
 		// validate
-		if err := validator.New().Struct(req); err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(dto.NewResponse[interface{}](nil, fiber.StatusBadRequest, err.Error()))
+		if err := validator.New().Struct(&req); err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(dto.NewResponse[any](nil, fiber.StatusBadRequest, err.Error()))
 		}
 
-		return nil
+		return c.Next()
 	}
 }
