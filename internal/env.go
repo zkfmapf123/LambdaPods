@@ -19,5 +19,6 @@ func GetProcessEnv() map[string]string {
 		"DB_USER":  GetEnvReturnDefault("DB_USER", "postgres"),
 		"DB_PASS":  GetEnvReturnDefault("DB_PASS", "postgres"),
 		"DB_NAME":  GetEnvReturnDefault("DB_NAME", "postgres"),
+		"ENV":      GetEnvReturnDefault("ENV", "dev"),
 	}
 }

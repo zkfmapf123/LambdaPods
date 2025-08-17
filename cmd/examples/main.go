@@ -12,6 +12,8 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/zkfmapf123/lambda-pods/configs"
 	"github.com/zkfmapf123/lambda-pods/internal"
+	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
 
 var (
@@ -22,6 +24,7 @@ var (
 	DB_USER  = internal.GetProcessEnv()["DB_USER"]
 	DB_PASS  = internal.GetProcessEnv()["DB_PASS"]
 	DB_NAME  = internal.GetProcessEnv()["DB_NAME"]
+	ENV      = internal.GetProcessEnv()["ENV"]
 )
 
 func main() {
@@ -35,15 +38,20 @@ func main() {
 		AppName:       APP_NAME,
 	})
 
+	// global settings
+	logger := internal.NewLogger(ENV)
 	db := configs.MustInitDB(DB_HOST, DB_PORT, DB_USER, DB_PASS, DB_NAME)
 
 	setDefaultRouter(app)
 	setMiddleware(app)
-	setRouters(app)
+	setRouters(app, RouterParams{
+		db:     db,
+		logger: logger,
+	})
 
 	go func() {
 		if err := app.Listen(":" + PORT); err != nil {
-			log.Printf("Server error: %v\n", err)
+			logger.Error("Server error", zap.Error(err))
 		}
 	}()
 
@@ -63,9 +71,14 @@ func main() {
 		log.Println("Server shutdown complete")
 	}
 
+	// Database Close
 	if err := configs.CloseDB(db); err != nil {
 		log.Printf("Failed to close database: %v\n", err)
 	}
+
+	// Logger Close
+	defer logger.Sync()
+
 	log.Println("Server shutdown complete")
 }
 
@@ -88,10 +101,21 @@ func setDefaultRouter(app *fiber.App) {
 		})
 }
 
-func setRouters(app *fiber.App) {
+// ////////////////////////////////////////////////////// Router ////////////////////////////////////////////////////////
+type RouterParams struct {
+	db     *gorm.DB
+	logger *zap.Logger
+}
+
+func setRouters(app *fiber.App, params RouterParams) {
 	// gracefully shutdown test
 	// app.Get("/test", func(c *fiber.Ctx) error {
 	// 	time.Sleep(15 * time.Second)
 	// 	return c.SendString("test")
 	// })
+
+	app.Get("/test", func(c *fiber.Ctx) error {
+		params.logger.Info("test", zap.String("username", "leedonggyu"), zap.Int("age", 94), zap.String("job", "devops"))
+		return c.SendString("test")
+	})
 }

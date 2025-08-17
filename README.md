@@ -1,5 +1,9 @@
 # LambdaPods
 
+## Utils
+
+- [ ] zap logger 추가
+
 ## 로그인
 
 - [ ] 회원가입

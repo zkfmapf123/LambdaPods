@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// @test 람다 삭제 여부 확인
 func Test_ValidateDeleteLambda(t *testing.T) {
 	lambda_1 := Lambda{
 		DeletedAt: nil,
