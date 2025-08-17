@@ -144,19 +144,22 @@ func setRouters(app *fiber.App, params RouterParams) {
 	app.Post("/settings", middlewares.ValidateMiddleware[dto.SettingRequest](), settingHandler.UpdateAssumeRoleARN)
 
 	// 로그인
+	app.Post("/users/signup")
 	// 유저 생성
+	app.Post("/users/")
 	// 유저 삭제
+	app.Delete("/users")
 	// 유저 Role 변경
+	app.Put("/users")
 
 	// Lambda 리스트 조회
+	app.Get("/lambda")
 	// Lambda 리스트 생성
+	app.Post("/lambda")
 	// Lambda 리스트 배포 (수정)
+	app.Put("/lambda")
 	// Lambda 리스트 삭제
-
-	app.Get("/test", func(c *fiber.Ctx) error {
-		params.logger.Info("test", zap.String("username", "leedonggyu"), zap.Int("age", 94), zap.String("job", "devops"))
-		return c.SendString("test")
-	})
+	app.Delete("/lambda")
 }
 
 // 시작할때 DB Host 변경
