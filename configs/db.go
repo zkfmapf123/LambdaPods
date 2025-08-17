@@ -49,6 +49,8 @@ func MustInitDB(
 func MigrateDB(db *gorm.DB) error {
 	return db.AutoMigrate(
 		&domains.User{},
+		&domains.Lambdas{},
+		&domains.Settings{},
 	)
 }
 

@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type Lambda struct {
+type Lambdas struct {
 	ID              uint       `gorm:"primaryKey;autoIncrement" json:"id"`
 	Arn             string     `gorm:"type:varchar(255);not null;unique" json:"arn"`
 	Revision        int        `gorm:"type:int;not null;default:1" json:"revision"`
@@ -14,6 +14,6 @@ type Lambda struct {
 	DeletedAt       *time.Time `gorm:"index" json:"deleted_at,omitempty"`
 }
 
-func (l Lambda) IsDelete() bool {
+func (l Lambdas) IsDelete() bool {
 	return l.DeletedAt != nil
 }

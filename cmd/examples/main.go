@@ -10,6 +10,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/zkfmapf123/lambda-pods/cmd/examples/services"
 	"github.com/zkfmapf123/lambda-pods/configs"
 	"github.com/zkfmapf123/lambda-pods/internal"
 	"go.uber.org/zap"
@@ -17,14 +18,15 @@ import (
 )
 
 var (
-	PORT     = internal.GetProcessEnv()["PORT"]
-	APP_NAME = internal.GetProcessEnv()["APP_NAME"]
-	DB_HOST  = internal.GetProcessEnv()["DB_HOST"]
-	DB_PORT  = internal.GetProcessEnv()["DB_PORT"]
-	DB_USER  = internal.GetProcessEnv()["DB_USER"]
-	DB_PASS  = internal.GetProcessEnv()["DB_PASS"]
-	DB_NAME  = internal.GetProcessEnv()["DB_NAME"]
-	ENV      = internal.GetProcessEnv()["ENV"]
+	PORT           = internal.GetProcessEnv()["PORT"]
+	APP_NAME       = internal.GetProcessEnv()["APP_NAME"]
+	DB_HOST        = internal.GetProcessEnv()["DB_HOST"]
+	DB_PORT        = internal.GetProcessEnv()["DB_PORT"]
+	DB_USER        = internal.GetProcessEnv()["DB_USER"]
+	DB_PASS        = internal.GetProcessEnv()["DB_PASS"]
+	DB_NAME        = internal.GetProcessEnv()["DB_NAME"]
+	SERVER_RAND_ID = internal.GetProcessEnv()["SERVER_RAND_ID"]
+	ENV            = internal.GetProcessEnv()["ENV"]
 )
 
 func main() {
@@ -54,6 +56,9 @@ func main() {
 			logger.Error("Server error", zap.Error(err))
 		}
 	}()
+
+	/////////////////////////////////////////////// Init /////////////////////////////////////////////////
+	InitDBHostAndExternalID(db, logger)
 
 	/////////////////////////////////////////////// Gracefully Shutdown ///////////////////////////////////////////////
 	q := make(chan os.Signal, 1)
@@ -118,4 +123,9 @@ func setRouters(app *fiber.App, params RouterParams) {
 		params.logger.Info("test", zap.String("username", "leedonggyu"), zap.Int("age", 94), zap.String("job", "devops"))
 		return c.SendString("test")
 	})
+}
+
+func InitDBHostAndExternalID(db *gorm.DB, logger *zap.Logger) {
+	settingServce := services.NewSettingService(db, logger)
+	settingServce.InitSetting(DB_HOST, SERVER_RAND_ID)
 }

@@ -1,7 +1,19 @@
 package domains
 
 type Settings struct {
-	ProjectID     string `gorm:"type:varchar(255);not null;unique" json:"project_id"`
-	ExternalID    string `gorm:"type:varchar(255);not null;unique" json:"external_id"`
-	AssumeRoleARN string `gorm:"type:varchar(255);not null" json:"assume_role_arn"`
+	DBHost        string `gorm:"type:varchar(255);not null" json:"db_host"`
+	ExternalID    string `gorm:"type:varchar(255);not null" json:"external_id"`
+	AssumeRoleARN string `gorm:"type:varchar(255)" json:"assume_role_arn"`
+}
+
+func (s *Settings) TableName() string {
+	return "settings"
+}
+
+func (s *Settings) IsEmptyDBHost() bool {
+	return s.DBHost == ""
+}
+
+func (s *Settings) IsMatchDBHost(dbHost string) bool {
+	return s.DBHost == dbHost
 }

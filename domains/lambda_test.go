@@ -9,11 +9,11 @@ import (
 
 // @test 람다 삭제 여부 확인
 func Test_ValidateDeleteLambda(t *testing.T) {
-	lambda_1 := Lambda{
+	lambda_1 := Lambdas{
 		DeletedAt: nil,
 	}
 
-	lambda_2 := Lambda{
+	lambda_2 := Lambdas{
 		DeletedAt: &time.Time{},
 	}
 
