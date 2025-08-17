@@ -9,7 +9,9 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/zkfmapf123/lambda-pods/cmd/examples/dto"
+	"github.com/zkfmapf123/lambda-pods/cmd/examples/handlers"
+	"github.com/zkfmapf123/lambda-pods/cmd/examples/middlewares"
 	"github.com/zkfmapf123/lambda-pods/cmd/examples/services"
 	"github.com/zkfmapf123/lambda-pods/configs"
 	"github.com/zkfmapf123/lambda-pods/internal"
@@ -45,7 +47,7 @@ func main() {
 	db := configs.MustInitDB(DB_HOST, DB_PORT, DB_USER, DB_PASS, DB_NAME)
 
 	setDefaultRouter(app)
-	setMiddleware(app)
+	setMiddleware(app, logger)
 	setRouters(app, RouterParams{
 		db:     db,
 		logger: logger,
@@ -87,8 +89,8 @@ func main() {
 	log.Println("Server shutdown complete")
 }
 
-func setMiddleware(app *fiber.App) {
-	app.Use(logger.New())
+func setMiddleware(app *fiber.App, logger *zap.Logger) {
+	app.Use(middlewares.LoggingMiddleware(logger))
 }
 
 func setDefaultRouter(app *fiber.App) {
@@ -113,11 +115,20 @@ type RouterParams struct {
 }
 
 func setRouters(app *fiber.App, params RouterParams) {
-	// gracefully shutdown test
-	// app.Get("/test", func(c *fiber.Ctx) error {
-	// 	time.Sleep(15 * time.Second)
-	// 	return c.SendString("test")
-	// })
+	settingHandler := handlers.NewSettingHandler(params.db, params.logger)
+
+	// assumeRoleARN 설정
+	app.Post("/settings", middlewares.ValidateMiddleware[dto.SettingRequest](), settingHandler.UpdateAssumeRoleARN)
+
+	// 로그인
+	// 유저 생성
+	// 유저 삭제
+	// 유저 Role 변경
+
+	// Lambda 리스트 조회
+	// Lambda 리스트 생성
+	// Lambda 리스트 배포 (수정)
+	// Lambda 리스트 삭제
 
 	app.Get("/test", func(c *fiber.Ctx) error {
 		params.logger.Info("test", zap.String("username", "leedonggyu"), zap.Int("age", 94), zap.String("job", "devops"))
@@ -125,6 +136,7 @@ func setRouters(app *fiber.App, params RouterParams) {
 	})
 }
 
+// 시작할때 DB Host 변경
 func InitDBHostAndExternalID(db *gorm.DB, logger *zap.Logger) {
 	settingServce := services.NewSettingService(db, logger)
 	settingServce.InitSetting(DB_HOST, SERVER_RAND_ID)
