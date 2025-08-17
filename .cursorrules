@@ -36,7 +36,7 @@ For every API endpoint, include:
 ### 4. Tag Categories
 Use these consistent tags:
 - `settings` - Configuration and settings endpoints
-- `users` - User management endpoints  
+- `users` - User management endpoints
 - `lambda` - Lambda function management endpoints
 - `auth` - Authentication endpoints
 
