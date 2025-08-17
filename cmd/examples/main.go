@@ -141,25 +141,26 @@ func setRouters(app *fiber.App, params RouterParams) {
 	settingHandler := handlers.NewSettingHandler(params.db, params.logger)
 
 	// assumeRoleARN 설정
-	app.Post("/settings", middlewares.ValidateMiddleware[dto.SettingRequest](), settingHandler.UpdateAssumeRoleARN)
+	app.Post("/settings/role", middlewares.ValidateMiddleware[dto.SettingAssumeRoleRequest](), settingHandler.UpdateAssumeRoleARN)
+	app.Post("/settings/apikey", middlewares.ValidateMiddleware[dto.SettingOpenAPIKeyRequest](), settingHandler.UpdateAPIKey)
 
 	// 로그인
-	app.Post("/users/signup")
-	// 유저 생성
-	app.Post("/users/")
-	// 유저 삭제
-	app.Delete("/users")
-	// 유저 Role 변경
-	app.Put("/users")
+	// app.Post("/users/signup")
+	// // 유저 생성
+	// app.Post("/users/")
+	// // 유저 삭제
+	// app.Delete("/users")
+	// // 유저 Role 변경
+	// app.Put("/users")
 
-	// Lambda 리스트 조회
-	app.Get("/lambda")
-	// Lambda 리스트 생성
-	app.Post("/lambda")
-	// Lambda 리스트 배포 (수정)
-	app.Put("/lambda")
-	// Lambda 리스트 삭제
-	app.Delete("/lambda")
+	// // Lambda 리스트 조회
+	// app.Get("/lambda")
+	// // Lambda 리스트 생성
+	// app.Post("/lambda")
+	// // Lambda 리스트 배포 (수정)
+	// app.Put("/lambda")
+	// // Lambda 리스트 삭제
+	// app.Delete("/lambda")
 }
 
 // 시작할때 DB Host 변경
